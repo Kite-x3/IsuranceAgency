@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="3d6a0710edbf483ebf2bc7ddd29ee1d5" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="InsuranceDBModel.CaseType" Width="1.5" PointX="3" PointY="6.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="InsuranceDBModel.Client" Width="1.5" PointX="0.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="InsuranceDBModel.Contract" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="InsuranceDBModel.InsuranceAgent" Width="1.5" PointX="0.75" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="InsuranceDBModel.InsuranceCase" Width="1.5" PointX="5.25" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="InsuranceDBModel.InsuranceProgram" Width="1.5" PointX="0.75" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="InsuranceDBModel.Property" Width="1.5" PointX="0.75" PointY="11.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="InsuranceDBModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="5.75" IsExpanded="true" />
+        <AssociationConnector Association="InsuranceDBModel.FK__Insurance__CaseT__21B6055D" ManuallyRouted="false" />
+        <AssociationConnector Association="InsuranceDBModel.FK__Contract__Client__164452B1" ManuallyRouted="false" />
+        <AssociationConnector Association="InsuranceDBModel.FK__Contract__Insura__173876EA" ManuallyRouted="false" />
+        <AssociationConnector Association="InsuranceDBModel.FK__Contract__Progra__35BCFE0A" ManuallyRouted="false" />
+        <AssociationConnector Association="InsuranceDBModel.FK__Insurance__Contr__1DE57479" ManuallyRouted="false" />
+        <AssociationConnector Association="InsuranceDBModel.FK_Contract_Property" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="InsuranceDBModel.LifestyleOptions" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="InsuranceDBModel.TimingOptions" Width="1.5" PointX="8.375" PointY="3.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

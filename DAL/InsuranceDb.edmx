@@ -1,0 +1,609 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Хранилище InsuranceDBModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="CaseType">
+          <Key>
+            <PropertyRef Name="CaseTypeID" />
+          </Key>
+          <Property Name="CaseTypeID" Type="int" Nullable="false" />
+          <Property Name="Situation" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="BaseCost" Type="int" Nullable="false" />
+          <Property Name="Property" Type="bit" />
+        </EntityType>
+        <EntityType Name="Client">
+          <Key>
+            <PropertyRef Name="ClientID" />
+          </Key>
+          <Property Name="ClientID" Type="int" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Passport" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="BirthDate" Type="date" Nullable="false" />
+          <Property Name="Password" Type="nchar" MaxLength="20" Nullable="false" />
+          <Property Name="Email" Type="nchar" MaxLength="50" Nullable="false" />
+          <Property Name="Gender" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="Profession" Type="nchar" MaxLength="20" Nullable="false" />
+          <Property Name="Health" Type="nchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Contract">
+          <Key>
+            <PropertyRef Name="ContractID" />
+          </Key>
+          <Property Name="ContractID" Type="int" Nullable="false" />
+          <Property Name="ClientID" Type="int" Nullable="false" />
+          <Property Name="InsuranceAgentID" Type="int" />
+          <Property Name="Cost" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="StartDate" Type="date" Nullable="false" />
+          <Property Name="EndDate" Type="date" Nullable="false" />
+          <Property Name="ObjectID" Type="int" />
+          <Property Name="ProgramID" Type="int" Nullable="false" />
+          <Property Name="signed" Type="bit" />
+          <Property Name="ready" Type="bit" />
+          <Property Name="Comment" Type="nchar" MaxLength="100" />
+          <Property Name="Number" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="InsuranceAgent">
+          <Key>
+            <PropertyRef Name="InsuranceAgentID" />
+          </Key>
+          <Property Name="InsuranceAgentID" Type="int" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Position" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Password" Type="nchar" MaxLength="20" Nullable="false" />
+          <Property Name="Email" Type="nchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="InsuranceCase">
+          <Key>
+            <PropertyRef Name="CaseID" />
+          </Key>
+          <Property Name="CaseID" Type="int" Nullable="false" />
+          <Property Name="ContractID" Type="int" Nullable="false" />
+          <Property Name="PayoutAmount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="CaseTypeID" Type="int" Nullable="false" />
+          <Property Name="signed" Type="bit" />
+          <Property Name="description" Type="nchar" MaxLength="100" />
+          <Property Name="PayoutDate" Type="date" />
+          <Property Name="Comment" Type="nchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="InsuranceProgram">
+          <Key>
+            <PropertyRef Name="ProgramID" />
+          </Key>
+          <Property Name="ProgramID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="CostFormula" Type="nchar" MaxLength="20" Nullable="false" />
+          <Property Name="Property" Type="bit" Nullable="false" />
+          <Property Name="Description" Type="varchar(max)" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LifestyleOptions">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="Lifestyle" Type="nchar" MaxLength="100" />
+          <Property Name="Scale" Type="float" />
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Property">
+          <Key>
+            <PropertyRef Name="PropertyID" />
+          </Key>
+          <Property Name="PropertyID" Type="int" Nullable="false" />
+          <Property Name="Address" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="EstimatedValue" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Risks" Type="nvarchar" MaxLength="255" />
+          <Property Name="TotalArea" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="TimingOptions">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="timing" Type="nchar" MaxLength="10" />
+          <Property Name="scale" Type="float" />
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__Contract__Client__164452B1">
+          <End Role="Client" Type="Self.Client" Multiplicity="1" />
+          <End Role="Contract" Type="Self.Contract" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="ClientID" />
+            </Principal>
+            <Dependent Role="Contract">
+              <PropertyRef Name="ClientID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Contract__Insura__173876EA">
+          <End Role="InsuranceAgent" Type="Self.InsuranceAgent" Multiplicity="0..1" />
+          <End Role="Contract" Type="Self.Contract" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InsuranceAgent">
+              <PropertyRef Name="InsuranceAgentID" />
+            </Principal>
+            <Dependent Role="Contract">
+              <PropertyRef Name="InsuranceAgentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Contract__Progra__35BCFE0A">
+          <End Role="InsuranceProgram" Type="Self.InsuranceProgram" Multiplicity="1" />
+          <End Role="Contract" Type="Self.Contract" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InsuranceProgram">
+              <PropertyRef Name="ProgramID" />
+            </Principal>
+            <Dependent Role="Contract">
+              <PropertyRef Name="ProgramID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Insurance__CaseT__21B6055D">
+          <End Role="CaseType" Type="Self.CaseType" Multiplicity="1" />
+          <End Role="InsuranceCase" Type="Self.InsuranceCase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CaseType">
+              <PropertyRef Name="CaseTypeID" />
+            </Principal>
+            <Dependent Role="InsuranceCase">
+              <PropertyRef Name="CaseTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Insurance__Contr__1DE57479">
+          <End Role="Contract" Type="Self.Contract" Multiplicity="1" />
+          <End Role="InsuranceCase" Type="Self.InsuranceCase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contract">
+              <PropertyRef Name="ContractID" />
+            </Principal>
+            <Dependent Role="InsuranceCase">
+              <PropertyRef Name="ContractID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Contract_Property">
+          <End Role="Property" Type="Self.Property" Multiplicity="0..1" />
+          <End Role="Contract" Type="Self.Contract" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Property">
+              <PropertyRef Name="PropertyID" />
+            </Principal>
+            <Dependent Role="Contract">
+              <PropertyRef Name="ObjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Хранилище InsuranceDBModelContainer">
+          <EntitySet Name="CaseType" EntityType="Self.CaseType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Client" EntityType="Self.Client" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Contract" EntityType="Self.Contract" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InsuranceAgent" EntityType="Self.InsuranceAgent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InsuranceCase" EntityType="Self.InsuranceCase" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="InsuranceProgram" EntityType="Self.InsuranceProgram" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LifestyleOptions" EntityType="Self.LifestyleOptions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Property" EntityType="Self.Property" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TimingOptions" EntityType="Self.TimingOptions" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__Contract__Client__164452B1" Association="Self.FK__Contract__Client__164452B1">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Contract" EntitySet="Contract" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Contract__Insura__173876EA" Association="Self.FK__Contract__Insura__173876EA">
+            <End Role="InsuranceAgent" EntitySet="InsuranceAgent" />
+            <End Role="Contract" EntitySet="Contract" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Contract__Progra__35BCFE0A" Association="Self.FK__Contract__Progra__35BCFE0A">
+            <End Role="InsuranceProgram" EntitySet="InsuranceProgram" />
+            <End Role="Contract" EntitySet="Contract" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Insurance__CaseT__21B6055D" Association="Self.FK__Insurance__CaseT__21B6055D">
+            <End Role="CaseType" EntitySet="CaseType" />
+            <End Role="InsuranceCase" EntitySet="InsuranceCase" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Insurance__Contr__1DE57479" Association="Self.FK__Insurance__Contr__1DE57479">
+            <End Role="Contract" EntitySet="Contract" />
+            <End Role="InsuranceCase" EntitySet="InsuranceCase" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Contract_Property" Association="Self.FK_Contract_Property">
+            <End Role="Property" EntitySet="Property" />
+            <End Role="Contract" EntitySet="Contract" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="InsuranceDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="CaseType">
+          <Key>
+            <PropertyRef Name="CaseTypeID" />
+          </Key>
+          <Property Name="CaseTypeID" Type="Int32" Nullable="false" />
+          <Property Name="Situation" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BaseCost" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="InsuranceCase" Relationship="Self.FK__Insurance__CaseT__21B6055D" FromRole="CaseType" ToRole="InsuranceCase" />
+          <Property Name="Property" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="Client">
+          <Key>
+            <PropertyRef Name="ClientID" />
+          </Key>
+          <Property Name="ClientID" Type="Int32" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Passport" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="BirthDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Password" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Gender" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Profession" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Health" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="Contract" Relationship="Self.FK__Contract__Client__164452B1" FromRole="Client" ToRole="Contract" />
+        </EntityType>
+        <EntityType Name="Contract">
+          <Key>
+            <PropertyRef Name="ContractID" />
+          </Key>
+          <Property Name="ContractID" Type="Int32" Nullable="false" />
+          <Property Name="ClientID" Type="Int32" Nullable="false" />
+          <Property Name="InsuranceAgentID" Type="Int32" />
+          <Property Name="Cost" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="ObjectID" Type="Int32" />
+          <Property Name="ProgramID" Type="Int32" Nullable="false" />
+          <Property Name="signed" Type="Boolean" />
+          <Property Name="ready" Type="Boolean" />
+          <NavigationProperty Name="Client" Relationship="Self.FK__Contract__Client__164452B1" FromRole="Contract" ToRole="Client" />
+          <NavigationProperty Name="InsuranceAgent" Relationship="Self.FK__Contract__Insura__173876EA" FromRole="Contract" ToRole="InsuranceAgent" />
+          <NavigationProperty Name="InsuranceProgram" Relationship="Self.FK__Contract__Progra__35BCFE0A" FromRole="Contract" ToRole="InsuranceProgram" />
+          <NavigationProperty Name="InsuranceCase" Relationship="Self.FK__Insurance__Contr__1DE57479" FromRole="Contract" ToRole="InsuranceCase" />
+          <NavigationProperty Name="Property" Relationship="Self.FK_Contract_Property" FromRole="Contract" ToRole="Property" />
+          <Property Name="Comment" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Name="Number" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="InsuranceAgent">
+          <Key>
+            <PropertyRef Name="InsuranceAgentID" />
+          </Key>
+          <Property Name="InsuranceAgentID" Type="Int32" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Position" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="true" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Contract" Relationship="Self.FK__Contract__Insura__173876EA" FromRole="InsuranceAgent" ToRole="Contract" />
+        </EntityType>
+        <EntityType Name="InsuranceCase">
+          <Key>
+            <PropertyRef Name="CaseID" />
+          </Key>
+          <Property Name="CaseID" Type="Int32" Nullable="false" />
+          <Property Name="ContractID" Type="Int32" Nullable="false" />
+          <Property Name="PayoutAmount" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="CaseTypeID" Type="Int32" Nullable="false" />
+          <Property Name="signed" Type="Boolean" />
+          <Property Name="description" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Name="PayoutDate" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="CaseType" Relationship="Self.FK__Insurance__CaseT__21B6055D" FromRole="InsuranceCase" ToRole="CaseType" />
+          <NavigationProperty Name="Contract" Relationship="Self.FK__Insurance__Contr__1DE57479" FromRole="InsuranceCase" ToRole="Contract" />
+          <Property Name="Comment" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+        </EntityType>
+        <EntityType Name="InsuranceProgram">
+          <Key>
+            <PropertyRef Name="ProgramID" />
+          </Key>
+          <Property Name="ProgramID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CostFormula" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Property" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="Contract" Relationship="Self.FK__Contract__Progra__35BCFE0A" FromRole="InsuranceProgram" ToRole="Contract" />
+        </EntityType>
+        <EntityType Name="Property">
+          <Key>
+            <PropertyRef Name="PropertyID" />
+          </Key>
+          <Property Name="PropertyID" Type="Int32" Nullable="false" />
+          <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="EstimatedValue" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="Risks" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TotalArea" Type="Double" Nullable="false" />
+          <NavigationProperty Name="Contract" Relationship="Self.FK_Contract_Property" FromRole="Property" ToRole="Contract" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <Association Name="FK__Insurance__CaseT__21B6055D">
+          <End Role="CaseType" Type="Self.CaseType" Multiplicity="1" />
+          <End Role="InsuranceCase" Type="Self.InsuranceCase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CaseType">
+              <PropertyRef Name="CaseTypeID" />
+            </Principal>
+            <Dependent Role="InsuranceCase">
+              <PropertyRef Name="CaseTypeID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Contract__Client__164452B1">
+          <End Role="Client" Type="Self.Client" Multiplicity="1" />
+          <End Role="Contract" Type="Self.Contract" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Client">
+              <PropertyRef Name="ClientID" />
+            </Principal>
+            <Dependent Role="Contract">
+              <PropertyRef Name="ClientID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Contract__Insura__173876EA">
+          <End Role="InsuranceAgent" Type="Self.InsuranceAgent" Multiplicity="0..1" />
+          <End Role="Contract" Type="Self.Contract" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InsuranceAgent">
+              <PropertyRef Name="InsuranceAgentID" />
+            </Principal>
+            <Dependent Role="Contract">
+              <PropertyRef Name="InsuranceAgentID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Contract__Progra__35BCFE0A">
+          <End Role="InsuranceProgram" Type="Self.InsuranceProgram" Multiplicity="1" />
+          <End Role="Contract" Type="Self.Contract" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InsuranceProgram">
+              <PropertyRef Name="ProgramID" />
+            </Principal>
+            <Dependent Role="Contract">
+              <PropertyRef Name="ProgramID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Insurance__Contr__1DE57479">
+          <End Role="Contract" Type="Self.Contract" Multiplicity="1" />
+          <End Role="InsuranceCase" Type="Self.InsuranceCase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contract">
+              <PropertyRef Name="ContractID" />
+            </Principal>
+            <Dependent Role="InsuranceCase">
+              <PropertyRef Name="ContractID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Contract_Property">
+          <End Role="Property" Type="Self.Property" Multiplicity="0..1" />
+          <End Role="Contract" Type="Self.Contract" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Property">
+              <PropertyRef Name="PropertyID" />
+            </Principal>
+            <Dependent Role="Contract">
+              <PropertyRef Name="ObjectID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="InsuranceDBEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="CaseType" EntityType="Self.CaseType" />
+          <EntitySet Name="Client" EntityType="Self.Client" />
+          <EntitySet Name="Contract" EntityType="Self.Contract" />
+          <EntitySet Name="InsuranceAgent" EntityType="Self.InsuranceAgent" />
+          <EntitySet Name="InsuranceCase" EntityType="Self.InsuranceCase" />
+          <EntitySet Name="InsuranceProgram" EntityType="Self.InsuranceProgram" />
+          <EntitySet Name="Property" EntityType="Self.Property" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+          <AssociationSet Name="FK__Insurance__CaseT__21B6055D" Association="Self.FK__Insurance__CaseT__21B6055D">
+            <End Role="CaseType" EntitySet="CaseType" />
+            <End Role="InsuranceCase" EntitySet="InsuranceCase" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Contract__Client__164452B1" Association="Self.FK__Contract__Client__164452B1">
+            <End Role="Client" EntitySet="Client" />
+            <End Role="Contract" EntitySet="Contract" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Contract__Insura__173876EA" Association="Self.FK__Contract__Insura__173876EA">
+            <End Role="InsuranceAgent" EntitySet="InsuranceAgent" />
+            <End Role="Contract" EntitySet="Contract" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Contract__Progra__35BCFE0A" Association="Self.FK__Contract__Progra__35BCFE0A">
+            <End Role="InsuranceProgram" EntitySet="InsuranceProgram" />
+            <End Role="Contract" EntitySet="Contract" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Insurance__Contr__1DE57479" Association="Self.FK__Insurance__Contr__1DE57479">
+            <End Role="Contract" EntitySet="Contract" />
+            <End Role="InsuranceCase" EntitySet="InsuranceCase" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Contract_Property" Association="Self.FK_Contract_Property">
+            <End Role="Property" EntitySet="Property" />
+            <End Role="Contract" EntitySet="Contract" />
+          </AssociationSet>
+          <EntitySet Name="LifestyleOptions" EntityType="InsuranceDBModel.LifestyleOptions" />
+          <EntitySet Name="TimingOptions" EntityType="InsuranceDBModel.TimingOptions" />
+        </EntityContainer>
+        <EntityType Name="LifestyleOptions">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="Lifestyle" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Name="Scale" Type="Double" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="TimingOptions">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="timing" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="scale" Type="Double" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Хранилище InsuranceDBModelContainer" CdmEntityContainer="InsuranceDBEntities1">
+          <EntitySetMapping Name="CaseType">
+            <EntityTypeMapping TypeName="InsuranceDBModel.CaseType">
+              <MappingFragment StoreEntitySet="CaseType">
+                <ScalarProperty Name="Property" ColumnName="Property" />
+                <ScalarProperty Name="CaseTypeID" ColumnName="CaseTypeID" />
+                <ScalarProperty Name="Situation" ColumnName="Situation" />
+                <ScalarProperty Name="BaseCost" ColumnName="BaseCost" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Client">
+            <EntityTypeMapping TypeName="InsuranceDBModel.Client">
+              <MappingFragment StoreEntitySet="Client">
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="Passport" ColumnName="Passport" />
+                <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="Profession" ColumnName="Profession" />
+                <ScalarProperty Name="Health" ColumnName="Health" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Contract">
+            <EntityTypeMapping TypeName="InsuranceDBModel.Contract">
+              <MappingFragment StoreEntitySet="Contract">
+                <ScalarProperty Name="Number" ColumnName="Number" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="InsuranceAgentID" ColumnName="InsuranceAgentID" />
+                <ScalarProperty Name="Cost" ColumnName="Cost" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="ObjectID" ColumnName="ObjectID" />
+                <ScalarProperty Name="ProgramID" ColumnName="ProgramID" />
+                <ScalarProperty Name="signed" ColumnName="signed" />
+                <ScalarProperty Name="ready" ColumnName="ready" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InsuranceAgent">
+            <EntityTypeMapping TypeName="InsuranceDBModel.InsuranceAgent">
+              <MappingFragment StoreEntitySet="InsuranceAgent">
+                <ScalarProperty Name="InsuranceAgentID" ColumnName="InsuranceAgentID" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InsuranceCase">
+            <EntityTypeMapping TypeName="InsuranceDBModel.InsuranceCase">
+              <MappingFragment StoreEntitySet="InsuranceCase">
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="CaseID" ColumnName="CaseID" />
+                <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+                <ScalarProperty Name="PayoutAmount" ColumnName="PayoutAmount" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="CaseTypeID" ColumnName="CaseTypeID" />
+                <ScalarProperty Name="signed" ColumnName="signed" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="PayoutDate" ColumnName="PayoutDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InsuranceProgram">
+            <EntityTypeMapping TypeName="InsuranceDBModel.InsuranceProgram">
+              <MappingFragment StoreEntitySet="InsuranceProgram">
+                <ScalarProperty Name="ProgramID" ColumnName="ProgramID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CostFormula" ColumnName="CostFormula" />
+                <ScalarProperty Name="Property" ColumnName="Property" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Property">
+            <EntityTypeMapping TypeName="InsuranceDBModel.Property">
+              <MappingFragment StoreEntitySet="Property">
+                <ScalarProperty Name="PropertyID" ColumnName="PropertyID" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="EstimatedValue" ColumnName="EstimatedValue" />
+                <ScalarProperty Name="Risks" ColumnName="Risks" />
+                <ScalarProperty Name="TotalArea" ColumnName="TotalArea" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="InsuranceDBModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LifestyleOptions">
+            <EntityTypeMapping TypeName="InsuranceDBModel.LifestyleOptions">
+              <MappingFragment StoreEntitySet="LifestyleOptions">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Scale" ColumnName="Scale" />
+                <ScalarProperty Name="Lifestyle" ColumnName="Lifestyle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TimingOptions">
+            <EntityTypeMapping TypeName="InsuranceDBModel.TimingOptions">
+              <MappingFragment StoreEntitySet="TimingOptions">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="scale" ColumnName="scale" />
+                <ScalarProperty Name="timing" ColumnName="timing" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Нет" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
