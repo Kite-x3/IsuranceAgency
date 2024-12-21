@@ -26,7 +26,6 @@
           <Property Name="Email" Type="nchar" MaxLength="50" Nullable="false" />
           <Property Name="Gender" Type="nchar" MaxLength="10" Nullable="false" />
           <Property Name="Profession" Type="nchar" MaxLength="20" Nullable="false" />
-          <Property Name="Health" Type="nchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Contract">
           <Key>
@@ -249,7 +248,6 @@
           <Property Name="Email" Type="String" MaxLength="50" FixedLength="true" Unicode="true" Nullable="false" />
           <Property Name="Gender" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
           <Property Name="Profession" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
-          <Property Name="Health" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
           <NavigationProperty Name="Contract" Relationship="Self.FK__Contract__Client__164452B1" FromRole="Client" ToRole="Contract" />
         </EntityType>
         <EntityType Name="Contract">
@@ -484,7 +482,6 @@
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="Gender" ColumnName="Gender" />
                 <ScalarProperty Name="Profession" ColumnName="Profession" />
-                <ScalarProperty Name="Health" ColumnName="Health" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

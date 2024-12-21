@@ -14,13 +14,23 @@ namespace BLL.Services
         {
             db = new InsuranceDBEntities1();
         }
+        public List<InsuranceProgram> GetInsuranceProgramList()
+        {
+            return db.InsuranceProgram.ToList();
+        }
         public List<string> GetProgramTypeOptions()
         {
-            return db.InsuranceProgram
-                .Select(p => p.Name)
-                .Distinct()
-                .ToList();
+            var programTypes = db.InsuranceProgram
+                                  .Select(p => p.Name)
+                                  .Distinct()
+                                  .ToList();
+
+            // вариант "Без фильтра" в начало списка
+            programTypes.Insert(0, "Без фильтра");
+
+            return programTypes;
         }
+
 
     }
 }

@@ -7,7 +7,6 @@
         mc:Ignorable="d"
         Title="AgentWindow" Height="450" Width="800">
     <Window.Resources>
-        <local:NullToTextConverter x:Key="NullTotext"/>
         <Style x:Key="HeaderStyle" TargetType="StackPanel">
             <Setter Property="Orientation" Value="Horizontal"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -140,17 +139,28 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            
+
             <TabItem Header="Отчёт">
                 <Grid Margin="10">
                     <StackPanel>
+                        <!-- Заголовок для выбора периода -->
                         <TextBlock Text="Выберите период:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+
+                        <!-- Поля для выбора дат -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <DatePicker SelectedDate="{Binding ReportStartDate}" Width="200"/>
                             <DatePicker SelectedDate="{Binding ReportEndDate}" Width="200" Margin="10,0,0,0"/>
                         </StackPanel>
-                        <Button Content="Сформировать отчёт" Style="{StaticResource ButtonStyle}" Command="{Binding GenerateReportCommand}" Width="200"/>
-                        <DataGrid ItemsSource="{Binding ReportData}" AutoGenerateColumns="False" Margin="0,10,0,0">
+
+                        <!-- Кнопка "Сформировать отчёт" -->
+                        <Button Content="Сформировать отчёт" 
+                    Style="{StaticResource ButtonStyle}" 
+                    Command="{Binding GenerateReportCommand}" 
+                    Width="200" 
+                    HorizontalAlignment="Left"/>
+
+                        <!-- Таблица с данными отчёта -->
+                        <DataGrid ItemsSource="{Binding ReportData}" AutoGenerateColumns="False" Margin="0,10,0,0" IsReadOnly="True">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Всего договоров" Binding="{Binding TotalContracts}" Width="*" />
                                 <DataGridTextColumn Header="Общая стоимость" Binding="{Binding TotalCost}" Width="*" />
@@ -159,9 +169,18 @@
                                 <DataGridTextColumn Header="Самая прибыльная программа" Binding="{Binding MostProfitableProgram}" Width="*" />
                             </DataGrid.Columns>
                         </DataGrid>
+
+                        <!-- Кнопка "Печать" для создания PDF -->
+                        <Button Content="Печать (PDF)" 
+                    Style="{StaticResource ButtonStyle}" 
+                    Command="{Binding PrintReportCommand}" 
+                    Width="200" 
+                    HorizontalAlignment="Left" 
+                    Margin="0,10,0,0"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
+
 
             <TabItem Header="Все договоры">
                 <Grid Margin="10">
@@ -169,39 +188,60 @@
                         <ColumnDefinition Width="293*"/>
                         <ColumnDefinition Width="483*"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.ColumnSpan="2">
-                        <TextBlock Text="Фильтры:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBox Width="200" Text="{Binding ContractNumberFilter, UpdateSourceTrigger=PropertyChanged}"/>
-                            <ComboBox ItemsSource="{Binding SignedStatusOptions}" SelectedItem="{Binding SelectedSignedStatus}" Margin="10,0,0,0"/>
-                            <ComboBox ItemsSource="{Binding ReadyStatusOptions}" SelectedItem="{Binding SelectedReadyStatus}" Margin="10,0,0,0"/>
-                            <ComboBox ItemsSource="{Binding ProgramTypeOptions}" SelectedItem="{Binding SelectedProgramType}" Margin="10,0,0,0"/>
+
+                    <Grid Grid.ColumnSpan="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,0,0,10">
+                            <TextBlock Text="Фильтры:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <TextBox Width="200" Text="{Binding ContractNumberFilter, UpdateSourceTrigger=PropertyChanged}" />
+                                <ComboBox ItemsSource="{Binding ContractSignedStatusOptions}" SelectedItem="{Binding SelectedContractSignedStatus}" Margin="10,0,0,0" MinWidth="100"/>
+                                <ComboBox ItemsSource="{Binding ReadyStatusOptions}" SelectedItem="{Binding SelectedReadyStatus}" Margin="10,0,0,0" MinWidth="100"/>
+                                <ComboBox ItemsSource="{Binding ProgramTypeOptions}" SelectedItem="{Binding SelectedProgramType}" Margin="10,0,0,0" MinWidth="100"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Button Content="Применить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ApplyContractFilterCommand}" Width="200" Margin="0,0,10,0"/>
+                                <Button Content="Сбросить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ResetFilterCommand}" Width="200"/>
+                            </StackPanel>
                         </StackPanel>
-                        <Button Content="Применить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ApplyContractFilterCommand}" Width="200"/>
-                        <Button Content="Сбросить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ResetFilterCommand}" Width="200"/>
-                        <DataGrid ItemsSource="{Binding FilteredContracts}" AutoGenerateColumns="True" Margin="0,10,0,0"/>
-                    </StackPanel>
+
+                        <DataGrid ItemsSource="{Binding FilteredContracts}" AutoGenerateColumns="True" Margin="0,10,0,0" Grid.Row="1" />
+                    </Grid>
                 </Grid>
             </TabItem>
 
+
             <TabItem Header="Все случаи">
                 <Grid Margin="10">
-                    <StackPanel>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,0,0,10">
                         <TextBlock Text="Фильтры:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBox Width="200" Text="{Binding CaseNumberFilter, UpdateSourceTrigger=PropertyChanged}"/>
-                            <ComboBox ItemsSource="{Binding SignedStatusOptions}" SelectedItem="{Binding SelectedSignedStatus}" Margin="10,0,0,0"/>
-                            <ComboBox ItemsSource="{Binding CaseTypeOptions}" SelectedItem="{Binding SelectedCaseType}" Margin="10,0,0,0"/>
+                            <ComboBox ItemsSource="{Binding CaseSignedStatusOptions}" SelectedItem="{Binding SelectedCaseSignedStatus}" Margin="10,0,0,0" MinWidth="100"/>
+                            <ComboBox ItemsSource="{Binding CaseTypeOptions}" SelectedItem="{Binding SelectedCaseType}" Margin="10,0,0,0" MinWidth="100"/>
                         </StackPanel>
-                        <Button Content="Применить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ApplyCaseFilterCommand}" Width="200"/>
-                        <Button Content="Сбросить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ResetFilterCommand}" Width="200"/>
-                        <DataGrid ItemsSource="{Binding FilteredCases}" AutoGenerateColumns="True" Margin="0,10,0,0"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Button Content="Применить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ApplyCaseFilterCommand}" Width="200"/>
+                            <Button Content="Сбросить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ResetFilterCommand}" Width="200"/>
+                        </StackPanel>
+                        
                     </StackPanel>
+
+                    <DataGrid ItemsSource="{Binding FilteredCases}" AutoGenerateColumns="True" Margin="0,10,0,0" Grid.Row="1"/>
                 </Grid>
             </TabItem>
 
         </TabControl>
-        <StackPanel Style="{StaticResource HeaderStyle}" Background="DarkGray"  Margin="0,0,10,10" HorizontalAlignment="Right" Orientation="Vertical" VerticalAlignment="Bottom">
+        <StackPanel Style="{StaticResource HeaderStyle}" Background="DarkGray"  HorizontalAlignment="Right" Orientation="Vertical">
             <TextBlock Style="{StaticResource CommonFontStyle}" Text="{Binding Username}" FontSize="12" Margin="10,10,10,10" HorizontalAlignment="Center"/>
             <Button Content="Выйти" Style="{StaticResource ButtonStyle}" HorizontalAlignment="Center" Margin="10,10,10,10" 
                     Background="#D4D4D4" Foreground="Black" Padding="10, 10, 10, 10"  Command="{Binding LeaveApp}"/>

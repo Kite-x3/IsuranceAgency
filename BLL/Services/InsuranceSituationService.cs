@@ -57,6 +57,25 @@ namespace BLL.Services
 
             return cases.ToList();
         }
+        public List<string> GetSignedStatusOptions()
+        {
+            var signedStatusOptions = new List<string> { "Без фильтра" };
+
+            // Подписан, Не подписан
+            signedStatusOptions.AddRange(db.InsuranceCase
+                .Select(c => c.signed)
+                .Distinct()
+                .Where(s => s.HasValue) // чтобы не добавлять null
+                .Select(s => s.Value ? "Подписан" : "Не подписан"));
+
+            // "Не определено", если есть записи с null в signed
+            if (db.InsuranceCase.Any(c => !c.signed.HasValue))
+            {
+                signedStatusOptions.Add("Не определено");
+            }
+
+            return signedStatusOptions;
+        }
 
         public List<InsuranceCaseInfoDTO> GetAllOfInsuranceCases()
         {
@@ -72,7 +91,9 @@ namespace BLL.Services
                             Date = insuranceCase.Date,
                             CaseTypeName = caseType.Situation,
                             Description = insuranceCase.description.TrimEnd(),
-                            Cost = caseType.BaseCost
+                            Cost = caseType.BaseCost,
+                            signed = insuranceCase.signed,
+                            Comment = insuranceCase.Comment.TrimEnd(),
                         };
 
             return cases.ToList();
@@ -99,26 +120,33 @@ namespace BLL.Services
             return cases.ToList();
         }
 
-        public List<InsuranceCaseInfoDTO> FilterCases(int? caseNumber, string caseType, bool? signedStatus)
+        public List<InsuranceCaseInfoDTO> FilterCases(int? caseNumber, string caseType, string signedStatus)
         {
             var cases = from ic in db.InsuranceCase
                         join contract in db.Contract on ic.ContractID equals contract.ContractID
+                        join client in db.Client on contract.ClientID equals client.ClientID
                         join caseTypeInDb in db.CaseType on ic.CaseTypeID equals caseTypeInDb.CaseTypeID
-                        where (caseNumber == 0 || contract.Number == caseNumber)
-                        && (caseType == null || caseTypeInDb.Situation == caseType) 
-                        && (signedStatus == null || ic.signed == signedStatus) 
+                        where
+                            (!caseNumber.HasValue || contract.Number == caseNumber) &&
+                            (caseType == "Без фильтра" || caseTypeInDb.Situation == caseType) &&
+                            (signedStatus == "Без фильтра" ||
+                                (signedStatus == "Подписан" && ic.signed == true) ||
+                                (signedStatus == "Не подписан" && ic.signed == false))
                         select new InsuranceCaseInfoDTO
                         {
                             CaseID = ic.CaseID,
                             ContractNumber = contract.Number,
+                            ClientName = client.FullName,
                             Date = ic.Date,
                             Description = ic.description,
                             Cost = ic.PayoutAmount,
-                            CaseTypeName = caseTypeInDb.Situation  
+                            CaseTypeName = caseTypeInDb.Situation
                         };
 
             return cases.ToList();
         }
+
+
 
 
         public void SignCase(int caseId, int cost, string comment)

@@ -16,5 +16,6 @@ namespace BLL.DTO
         public string Description { get; set; }
         public string Comment {  get; set; }
         public decimal Cost {  get; set; }
+        public bool? signed { get; set; }
     }
 }

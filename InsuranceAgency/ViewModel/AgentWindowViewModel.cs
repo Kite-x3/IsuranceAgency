@@ -1,16 +1,11 @@
 ﻿using BLL.DTO;
 using BLL.Services;
-using DAL;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Security.RightsManagement;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using System.Windows.Forms;
 
 namespace InsuranceAgency.ViewModel
 {
@@ -26,15 +21,8 @@ namespace InsuranceAgency.ViewModel
         private readonly InsuranceProgrammService _insuranceProgrammService;
         private readonly InsuranceTypeService _insuranceTypeService;
 
-        private bool _selectedSignedStatus;
-        public bool SelectedSignedStatus
-        {
-            get => _selectedSignedStatus;
-            set { _selectedSignedStatus = value; OnPropertyChanged(); }
-        }
-
-        private bool _selectedReadyStatus;
-        public bool SelectedReadyStatus
+        private string _selectedReadyStatus;
+        public string SelectedReadyStatus
         {
             get => _selectedReadyStatus;
             set { _selectedReadyStatus = value; OnPropertyChanged(); }
@@ -125,8 +113,8 @@ namespace InsuranceAgency.ViewModel
             }
         }
 
-        private decimal _customCost;
-        public decimal CustomCost
+        private decimal? _customCost;
+        public decimal? CustomCost
         {
             get => _customCost;
             set
@@ -147,15 +135,36 @@ namespace InsuranceAgency.ViewModel
             }
         }
 
-        private ObservableCollection<bool?> _signedStatusOptions;
-        public ObservableCollection<bool?> SignedStatusOptions
+        private ObservableCollection<string> _caseSignedStatusOptions;
+        public ObservableCollection<string> CaseSignedStatusOptions
         {
-            get => _signedStatusOptions;
-            set { _signedStatusOptions = value; OnPropertyChanged(); }
+            get => _caseSignedStatusOptions;
+            set { _caseSignedStatusOptions = value; OnPropertyChanged(); }
         }
 
-        private ObservableCollection<bool?> _readyStatusOptions;
-        public ObservableCollection<bool?> ReadyStatusOptions
+        private ObservableCollection<string> _contractSignedStatusOptions;
+        public ObservableCollection<string> ContractSignedStatusOptions
+        {
+            get => _contractSignedStatusOptions;
+            set { _contractSignedStatusOptions = value; OnPropertyChanged(); }
+        }
+
+        private string _selectedCaseSignedStatus;
+        public string SelectedCaseSignedStatus
+        {
+            get => _selectedCaseSignedStatus;
+            set { _selectedCaseSignedStatus = value; OnPropertyChanged(); }
+        }
+
+        private string _selectedContractSignedStatus;
+        public string SelectedContractSignedStatus
+        {
+            get => _selectedContractSignedStatus;
+            set { _selectedContractSignedStatus = value; OnPropertyChanged(); }
+        }
+
+        private ObservableCollection<string> _readyStatusOptions;
+        public ObservableCollection<string> ReadyStatusOptions
         {
             get => _readyStatusOptions;
             set { _readyStatusOptions = value; OnPropertyChanged(); }
@@ -189,29 +198,29 @@ namespace InsuranceAgency.ViewModel
                     SelectedContract.Comment = value;
             }
         }
-        private int _contractNumberFilter;
-        public int ContractNumberFilter
+        private int? _contractNumberFilter;
+        public int? ContractNumberFilter
         {
             get => _contractNumberFilter;
             set { _contractNumberFilter = value; OnPropertyChanged(); }
         }
 
-        private int _caseNumberFilter;
-        public int CaseNumberFilter
+        private int? _caseNumberFilter;
+        public int? CaseNumberFilter
         {
             get => _caseNumberFilter;
             set { _caseNumberFilter = value; OnPropertyChanged(); }
         }
 
-        private DateTime _reportStartDate;
-        public DateTime ReportStartDate
+        private DateTime? _reportStartDate;
+        public DateTime? ReportStartDate
         {
             get => _reportStartDate;
             set { _reportStartDate = value; OnPropertyChanged(); }
         }
 
-        private DateTime _reportEndDate;
-        public DateTime ReportEndDate
+        private DateTime? _reportEndDate;
+        public DateTime? ReportEndDate
         {
             get => _reportEndDate;
             set { _reportEndDate = value; OnPropertyChanged(); }
@@ -232,10 +241,13 @@ namespace InsuranceAgency.ViewModel
             InsuranceCases = new ObservableCollection<InsuranceCaseInfoDTO>(cases);
 
             var signedStatusOptions = _contractService.GetSignedStatusOptions();
-            SignedStatusOptions = new ObservableCollection<bool?>(signedStatusOptions);
+            ContractSignedStatusOptions = new ObservableCollection<string>(signedStatusOptions);
+
+            var caseSignedStatusOptions = _insuranceSituationService.GetSignedStatusOptions();
+            CaseSignedStatusOptions = new ObservableCollection<string>(caseSignedStatusOptions);
 
             var readyStatusOptions = _contractService.GetReadyStatusOptions();
-            ReadyStatusOptions = new ObservableCollection<bool?>(readyStatusOptions);
+            ReadyStatusOptions = new ObservableCollection<string>(readyStatusOptions);
 
             var programTypeOptions = _insuranceProgrammService.GetProgramTypeOptions();
             ProgramTypeOptions = new ObservableCollection<string>(programTypeOptions);
@@ -243,11 +255,17 @@ namespace InsuranceAgency.ViewModel
             var filtredContracts = _contractService.GetAllContracts();
             FilteredContracts = new ObservableCollection<ContractFilterDTO>(filtredContracts);
 
-            var caseType = _insuranceTypeService.GetAllInsuranceTypes();
-            CaseTypeOptions = new ObservableCollection<string>(caseType);
+            var caseTypeOptions = _insuranceTypeService.GetAllInsuranceTypes();
+            CaseTypeOptions = new ObservableCollection<string>(caseTypeOptions);
 
             var filtredcases = _insuranceSituationService.GetAllOfInsuranceCases();
             FilteredCases = new ObservableCollection<InsuranceCaseInfoDTO>(filtredcases);
+
+            SelectedContractSignedStatus = ContractSignedStatusOptions.FirstOrDefault();
+            SelectedReadyStatus = ReadyStatusOptions.FirstOrDefault();
+            SelectedProgramType = ProgramTypeOptions.FirstOrDefault();
+            SelectedCaseSignedStatus = CaseSignedStatusOptions.FirstOrDefault();
+            SelectedCaseType = CaseTypeOptions.FirstOrDefault();
         }
 
         public AgentWindowViewModel(string username, int userId) {
@@ -267,6 +285,7 @@ namespace InsuranceAgency.ViewModel
             RejectCaseCommand = new RelayCommand(RejectCase);
             AcceptContractCommand = new RelayCommand(AcceptContract);
             RejectContractCommand = new RelayCommand(RejectContract);
+            PrintReportCommand = new RelayCommand(PrintReport);
 
             GenerateReportCommand = new RelayCommand(GenerateReport);
             ApplyContractFilterCommand = new RelayCommand(ApplyContractFilter);
@@ -278,9 +297,29 @@ namespace InsuranceAgency.ViewModel
         public RelayCommand RejectCaseCommand { get; }
         public RelayCommand AcceptContractCommand { get; }
         public RelayCommand RejectContractCommand { get; }
-
+        public RelayCommand PrintReportCommand { get; }
         public RelayCommand ResetFilterCommand { get; }
 
+        private void PrintReport(object parameter)
+        {
+            if (ReportData == null || ReportData.Count == 0)
+            {
+                return;
+            }
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "PDF files (*.pdf)|*.pdf",
+                DefaultExt = "pdf",
+                FileName = "Отчёт.pdf"
+            };
+
+            var dialogResult = saveFileDialog.ShowDialog();
+            if (dialogResult == System.Windows.Forms.DialogResult.OK)
+            {
+                _reportService.GeneratePdfReport(ReportData.ToList(), ReportStartDate.Value, ReportEndDate.Value, saveFileDialog.FileName);
+            }
+        }
         public void ResetFilter(object parameter)
         {
             var filtredContracts = _contractService.GetAllContracts();
@@ -297,20 +336,21 @@ namespace InsuranceAgency.ViewModel
             if (ReportStartDate == null || ReportEndDate == null)
                 return;
 
-            var reportData = _reportService.GetReportData(ReportStartDate, ReportEndDate);
+            var reportData = _reportService.GetReportData(ReportStartDate.Value, ReportEndDate.Value);
             ReportData = new ObservableCollection<ReportItemDTO> { reportData };
         }
         private void ApplyContractFilter(object parameter)
         {
             var filteredContracts = _contractService.FilterContracts(ContractNumberFilter, 
-                SelectedSignedStatus, SelectedReadyStatus, SelectedProgramType);
+                SelectedContractSignedStatus, SelectedReadyStatus, SelectedProgramType);
 
             FilteredContracts = new ObservableCollection<ContractFilterDTO>(filteredContracts);
         }
 
         private void ApplyCaseFilter(object parameter)
         {
-            var filteredCases = _insuranceSituationService.FilterCases(CaseNumberFilter, SelectedCaseType, SelectedSignedStatus);
+            var filteredCases = _insuranceSituationService.FilterCases(CaseNumberFilter, 
+                SelectedCaseType, SelectedCaseSignedStatus);
 
             FilteredCases = new ObservableCollection<InsuranceCaseInfoDTO>(filteredCases);
         }
@@ -323,7 +363,8 @@ namespace InsuranceAgency.ViewModel
         {
             if (SelectedContract != null)
             {
-                _contractService.SignContract(SelectedContract.ContractID, (int)CustomCost, Comment);
+                _contractService.SignContract(SelectedContract.ContractID, 
+                    (int)CustomCost, Comment);
                 InsuranceContracts.Remove(SelectedContract);
                 CustomCost = 0;
                 Comment = string.Empty;

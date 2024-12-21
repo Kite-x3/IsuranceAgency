@@ -156,8 +156,19 @@ namespace BLL.Services
 
         public List<Contract> GetAllAceptWaitingContracts(int userID)
         {
-            return db.Contract.Where(c => c.signed == true && c.ready == null 
-            && c.ClientID == userID).ToList();
+            var contracts = db.Contract
+                .Where(c => c.signed == true && c.ready == null && c.ClientID == userID)
+                .ToList();
+
+            foreach (var contract in contracts)
+            {
+                if (!string.IsNullOrEmpty(contract.Comment))
+                {
+                    contract.Comment = contract.Comment.TrimEnd();
+                }
+            }
+
+            return contracts;
         }
 
         public void SignContract(int contractId, int cost, string comment)
@@ -167,6 +178,7 @@ namespace BLL.Services
             {
                 contract.signed = true;
                 contract.Cost = cost;
+                contract.ready = null;
                 contract.Comment = comment.TrimEnd();
                 db.SaveChanges();
             }
@@ -204,13 +216,26 @@ namespace BLL.Services
                 db.SaveChanges();
             }
         }
-        public List<bool?> GetSignedStatusOptions()
+        public List<string> GetSignedStatusOptions()
         {
-            return db.Contract
-                .Select(c => c.signed) 
+            var signedStatusOptions = new List<string> { "Без фильтра" };
+
+            // Подписан, Не подписан
+            signedStatusOptions.AddRange(db.Contract
+                .Select(c => c.signed)
                 .Distinct()
-                .ToList();
+                .Where(s => s.HasValue) //чтобы не добавлять null
+                .Select(s => s.Value ? "Подписан" : "Не подписан"));
+
+            // "Не определено", если есть записи с null в signed
+            if (db.Contract.Any(c => !c.signed.HasValue))
+            {
+                signedStatusOptions.Add("Не определено");
+            }
+
+            return signedStatusOptions;
         }
+
 
         public List<ContractFilterDTO> GetAllContracts()
         {
@@ -229,31 +254,55 @@ namespace BLL.Services
                                 StartDate = c.StartDate,
                                 EndDate = c.EndDate,
                                 ProgramName = p.Name,
-                                //SignedStatus = c.signed,
-                                //ReadyStatus = c.ready
+                                signed = c.signed,
+                                ready = c.ready
                             };
 
             return contracts.ToList();
         }
 
 
-        public List<bool?> GetReadyStatusOptions()
+        public List<string> GetReadyStatusOptions()
         {
-            return db.Contract
-                .Select(c => (bool?)c.ready)
+            var readyStatusOptions = new List<string> { "Без фильтра" };
+
+            // Добавляем варианты: Готов, Не готов, Не определено
+            readyStatusOptions.AddRange(db.Contract
+                .Select(c => c.ready)
                 .Distinct()
-                .ToList();
+                .Where(r => r.HasValue) // Фильтруем значения, чтобы не добавлять null
+                .Select(r => r.Value ? "Готов" : "Не готов"));
+
+            if (db.Contract.Any(c => !c.ready.HasValue))
+            {
+                readyStatusOptions.Add("Не определено");
+            }
+
+            return readyStatusOptions;
         }
 
-        public List<ContractFilterDTO> FilterContracts(int contractNumber, bool? signedStatus, 
-            bool? readyStatus, string programType)
+
+        public List<ContractFilterDTO> FilterContracts(int? contractNumber, string signedStatus, string readyStatus, string programType)
         {
             var contracts = from c in db.Contract
-                            join p in db.InsuranceProgram on c.ProgramID equals p.ProgramID 
-                            where (contractNumber == 0 || c.Number == contractNumber) &&
-                                  (string.IsNullOrEmpty(programType) || p.Name.Contains(programType)) && 
-                                  (c.signed == signedStatus) && 
-                                  (c.ready == readyStatus)
+                            join p in db.InsuranceProgram on c.ProgramID equals p.ProgramID
+                            where
+                                (!contractNumber.HasValue || c.Number == contractNumber) &&
+
+                                // Фильтрация по signedStatus (bit, с тремя состояниями)
+                                (signedStatus == "Без фильтра" ||
+                                 (signedStatus == "Не подписан" && c.signed == false) ||
+                                 (signedStatus == "Подписан" && c.signed == true) ||
+                                 (signedStatus == "Не определено" && !c.signed.HasValue)) &&
+
+                                // Фильтрация по readyStatus (bit, с тремя состояниями)
+                                (readyStatus == "Без фильтра" ||
+                                 (readyStatus == "Не готов" && c.ready == false) ||
+                                 (readyStatus == "Готов" && c.ready == true) ||
+                                 (readyStatus == "Не определено" && !c.ready.HasValue)) &&
+
+                                // Фильтрация по programType
+                                (programType == "Без фильтра" || p.Name.Contains(programType))
                             select new ContractFilterDTO
                             {
                                 ContractID = c.ContractID,
@@ -263,11 +312,16 @@ namespace BLL.Services
                                 Cost = c.Cost,
                                 StartDate = c.StartDate,
                                 EndDate = c.EndDate,
-                                ProgramName = p.Name
+                                ProgramName = p.Name,
+                                signed = c.signed,
+                                ready = c.ready,
                             };
 
             return contracts.ToList();
         }
+
+
+
 
     }
 }

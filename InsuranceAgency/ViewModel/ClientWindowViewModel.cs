@@ -17,6 +17,7 @@ namespace InsuranceAgency.ViewModel
     {
         private readonly ClientService _clientService;
         private readonly InsuranceProgrammContractService _programService;
+        private readonly InsuranceProgrammService _insuranceProgrammService;
         private readonly ContractService _contractService;
         private readonly InsuranceSituationService _insuranceSituationService;
         private readonly InsurancePeriodService _insurancePeriodService;
@@ -40,8 +41,8 @@ namespace InsuranceAgency.ViewModel
             }
         }
 
-        private DateTime _caseDate;
-        public DateTime CaseDate
+        private DateTime? _caseDate;
+        public DateTime? CaseDate
         {
             get => _caseDate;
             set
@@ -147,6 +148,7 @@ namespace InsuranceAgency.ViewModel
             IsLifeInsuranceVisible = SelectedInsuranceProgram?.Property == false;
             IsPropertyInsuranceVisible = SelectedInsuranceProgram?.Property == true;
         }
+
 
         private ObservableCollection<InsuranceProgram> _insurancePrograms;
         public ObservableCollection<InsuranceProgram> InsurancePrograms
@@ -296,7 +298,7 @@ namespace InsuranceAgency.ViewModel
 
         public RelayCommand CalculateCostCommand { get; }
         public RelayCommand LeaveApp { get; }
-        public RelayCommand SubmitCaseCommand { get;}
+        public RelayCommand SubmitCaseCommand { get; }
         public RelayCommand CalculateForRealCostCommand { get; }
         public RelayCommand CalculateRenewalCostCommand { get; }
 
@@ -311,15 +313,18 @@ namespace InsuranceAgency.ViewModel
             _contractService = new ContractService();
             _insuranceSituationService = new InsuranceSituationService();
             _lifestyleOptionsService = new LifestyleOptionsService();
+            _insuranceProgrammService = new InsuranceProgrammService();
             _insurancePeriodService = new InsurancePeriodService();
             CalculateCostCommand = new RelayCommand(GetContractCost);
             CalculateForRealCostCommand = new RelayCommand(CalculateForRealCost);
             CalculateRenewalCostCommand = new RelayCommand(RenewContract);
+
             LeaveApp = new RelayCommand(LeaveApplication);
             SubmitCaseCommand = new RelayCommand(NewInsuranceCase);
 
             AcceptContractCommand = new RelayCommand(AcceptContract);
             RejectContractCommand = new RelayCommand(RejectContract);
+
 
             Username = username;
             LoadOptions();
@@ -329,12 +334,12 @@ namespace InsuranceAgency.ViewModel
         {
             if (SelectedAcceptContract == null)
             {
-                MessageBox.Show("Выберите контракт для принятия.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Выберите договор для принятия.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             MessageBoxResult result = MessageBox.Show(
-                $"Стоимость контракта: {SelectedAcceptContract.Cost}.\nВы уверены, что хотите принять этот контракт?",
+                $"Стоимость договор: {SelectedAcceptContract.Cost}.\nВы уверены, что хотите принять этот договор?",
                 "Подтверждение",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
@@ -342,7 +347,7 @@ namespace InsuranceAgency.ViewModel
             if (result == MessageBoxResult.Yes)
             {
                 _contractService.AcceptContract(SelectedAcceptContract.ContractID);
-                MessageBox.Show("Контракт принят!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Договор принят!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                 LoadOptions();
             }
         }
@@ -351,12 +356,12 @@ namespace InsuranceAgency.ViewModel
         {
             if (SelectedAcceptContract == null)
             {
-                MessageBox.Show("Выберите контракт для отклонения.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Выберите Договор для отклонения.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
             MessageBoxResult result = MessageBox.Show(
-                "Вы уверены, что хотите отклонить этот контракт?",
+                "Вы уверены, что хотите отклонить этот договор?",
                 "Подтверждение",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
@@ -364,7 +369,7 @@ namespace InsuranceAgency.ViewModel
             if (result == MessageBoxResult.Yes)
             {
                 _contractService.RejectContract(SelectedAcceptContract.ContractID);
-                MessageBox.Show("Контракт отклонён.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Договор отклонён.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                 LoadOptions();
             }
         }
@@ -425,7 +430,7 @@ namespace InsuranceAgency.ViewModel
             }
 
             MessageBoxResult result = MessageBox.Show(
-                $"Стоимость контракта: {cost}.\nВы хотите отправить заявку?",
+                $"Стоимость договора: {cost}.\nВы хотите отправить заявку?",
                 "Подтверждение",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
@@ -461,19 +466,45 @@ namespace InsuranceAgency.ViewModel
 
         public void NewInsuranceCase(object parameter)
         {
-            if(CaseDate != default && SelectedInsuranceCaseType != null && SelectedContract != null)
+            if (CaseDate != default && SelectedInsuranceCaseType != null && SelectedContract != null)
             {
-                _insuranceSituationService.createInsuranceSituationAplication(CaseDate, 
-                    SelectedInsuranceCaseType.CaseTypeID, SelectedContract.ContractID, InsuranceSituation);
-                MessageBox.Show("Заявка на страховой случай успешно создана!",
-                    "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                // Выводим подтверждение
+                var result = MessageBox.Show(
+                    "Вы уверены, что хотите отправить заявку на страховой случай?",
+                    "Подтверждение",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                );
+
+                // Если пользователь согласился, отправляем заявку
+                if (result == MessageBoxResult.Yes)
+                {
+                    _insuranceSituationService.createInsuranceSituationAplication(
+                        CaseDate.Value,
+                        SelectedInsuranceCaseType.CaseTypeID,
+                        SelectedContract.ContractID,
+                        InsuranceSituation
+                    );
+
+                    MessageBox.Show(
+                        "Заявка на страховой случай успешно создана!",
+                        "Успех",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                }
             }
             else
             {
-                MessageBox.Show("Заполните все поля.", 
-                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Заполните все поля.",
+                    "Ошибка",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
+
 
         public void RenewContract(object parameter)
         {
@@ -482,7 +513,7 @@ namespace InsuranceAgency.ViewModel
             {
                 cost = _contractService.RenewContractCost(SelectedContract.ContractID);
                 MessageBoxResult result = MessageBox.Show(
-                $"Стоимость контракта: {cost}.\nВы хотите отправить заявку?",
+                $"Стоимость договора: {cost}.\nВы хотите отправить заявку?",
                 "Подтверждение",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
@@ -510,7 +541,7 @@ namespace InsuranceAgency.ViewModel
             var Timig = _insurancePeriodService.GetInsurancePeriods();
             InsurancePeriods = new ObservableCollection<TimingOptions>(Timig);
 
-            var programs = _clientService.GetInsuranceProgramList();
+            var programs = _insuranceProgrammService.GetInsuranceProgramList();
             InsurancePrograms = new ObservableCollection<InsuranceProgram>(programs);
 
             var situations = _insuranceSituationService.GetAllCaseTypes();

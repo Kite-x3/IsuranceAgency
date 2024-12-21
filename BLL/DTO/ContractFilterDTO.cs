@@ -16,7 +16,8 @@ namespace BLL.DTO
         public string Comment { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-
         public string ProgramName { get; set; }
+        public bool? signed { get; set; }
+        public bool? ready { get; set; }
     }
 }

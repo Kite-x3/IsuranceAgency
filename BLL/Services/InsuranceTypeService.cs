@@ -15,7 +15,12 @@ namespace BLL.Services
         }
         public List<string> GetAllInsuranceTypes()
         {
-            return db.CaseType.Select(c => c.Situation).ToList();
+            var insuranceTypes = db.CaseType.Select(c => c.Situation).ToList();
+
+            insuranceTypes.Insert(0, "Без фильтра");
+
+            return insuranceTypes;
         }
+
     }
 }

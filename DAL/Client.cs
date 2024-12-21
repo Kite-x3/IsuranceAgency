@@ -28,7 +28,6 @@ namespace DAL
         public string Email { get; set; }
         public string Gender { get; set; }
         public string Profession { get; set; }
-        public string Health { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Contract> Contract { get; set; }

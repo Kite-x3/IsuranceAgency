@@ -16,10 +16,6 @@ namespace BLL.Services
             db = new InsuranceDBEntities1();
 
         }
-        public List<InsuranceProgram> GetInsuranceProgramList()
-        {
-            return db.InsuranceProgram.ToList();
-        }
         public int GetAgeOfUser(int userId)
         {
             var client = db.Client.FirstOrDefault(c => c.ClientID == userId);
