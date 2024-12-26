@@ -16,5 +16,6 @@ namespace BLL.DTO
         public string CaseTypeName { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
+        public string signed { get; set; }
     }
 }

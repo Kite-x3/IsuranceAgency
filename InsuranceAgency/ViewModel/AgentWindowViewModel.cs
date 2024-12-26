@@ -4,8 +4,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace InsuranceAgency.ViewModel
 {
@@ -20,6 +22,7 @@ namespace InsuranceAgency.ViewModel
         private readonly ReportService _reportService;
         private readonly InsuranceProgrammService _insuranceProgrammService;
         private readonly InsuranceTypeService _insuranceTypeService;
+        private readonly ClientService _clientService;
 
         private string _selectedReadyStatus;
         public string SelectedReadyStatus
@@ -205,6 +208,42 @@ namespace InsuranceAgency.ViewModel
             set { _contractNumberFilter = value; OnPropertyChanged(); }
         }
 
+        private string _newClientName;
+        public string NewClientName
+        {
+            get => _newClientName;
+            set { _newClientName = value; OnPropertyChanged(); }
+        }
+
+        private string _newClientPassport;
+        public string NewClientPassport
+        {
+            get => _newClientPassport;
+            set { _newClientPassport = value; OnPropertyChanged(); }
+        }
+
+        private DateTime? _newClientBirthDate;
+        public DateTime? NewClientBirthDate
+        {
+            get => _newClientBirthDate;
+            set { _newClientBirthDate = value; OnPropertyChanged(); }
+        }
+
+        private string _newClientPassword;
+        public string NewClientPassword
+        {
+            get => _newClientPassword;
+            set { _newClientPassword = value; OnPropertyChanged(); }
+        }
+
+        private string _newClientEmail;
+        public string NewClientEmail
+        {
+            get => _newClientEmail;
+            set { _newClientEmail = value; OnPropertyChanged(); }
+        }
+
+
         private int? _caseNumberFilter;
         public int? CaseNumberFilter
         {
@@ -230,6 +269,7 @@ namespace InsuranceAgency.ViewModel
         public RelayCommand GenerateReportCommand { get; }
         public RelayCommand ApplyContractFilterCommand { get; }
         public RelayCommand ApplyCaseFilterCommand { get; }
+        public RelayCommand AddClientCommand { get; }
 
 
         public void LoadData()
@@ -275,6 +315,7 @@ namespace InsuranceAgency.ViewModel
             _reportService = new ReportService();
             _insuranceProgrammService = new InsuranceProgrammService();
             _insuranceTypeService = new InsuranceTypeService();
+            _clientService = new ClientService();
             LoadData();
 
             LeaveApp = new RelayCommand(LeaveApplication);
@@ -286,6 +327,7 @@ namespace InsuranceAgency.ViewModel
             AcceptContractCommand = new RelayCommand(AcceptContract);
             RejectContractCommand = new RelayCommand(RejectContract);
             PrintReportCommand = new RelayCommand(PrintReport);
+            AddClientCommand = new RelayCommand(AddClient);
 
             GenerateReportCommand = new RelayCommand(GenerateReport);
             ApplyContractFilterCommand = new RelayCommand(ApplyContractFilter);
@@ -299,6 +341,51 @@ namespace InsuranceAgency.ViewModel
         public RelayCommand RejectContractCommand { get; }
         public RelayCommand PrintReportCommand { get; }
         public RelayCommand ResetFilterCommand { get; }
+
+        private void AddClient(object parameter)
+        {
+            if (string.IsNullOrWhiteSpace(NewClientName) ||
+                string.IsNullOrWhiteSpace(NewClientPassport) ||
+                NewClientBirthDate == null ||
+                string.IsNullOrWhiteSpace(NewClientPassword) ||
+                string.IsNullOrWhiteSpace(NewClientEmail))
+            {
+                MessageBox.Show("Все поля должны быть заполнены.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var result = MessageBox.Show(
+                $"Вы уверены, что хотите добавить нового клиента?\n\n" +
+                $"Имя: {NewClientName}\n" +
+                $"Паспорт: {NewClientPassport}\n" +
+                $"Дата рождения: {NewClientBirthDate:dd.MM.yyyy}\n" +
+                $"Email: {NewClientEmail}",
+                "Подтверждение",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                _clientService.AddClient(
+                name: NewClientName,
+                passport: NewClientPassport,
+                birthDate: NewClientBirthDate.Value,
+                password: NewClientPassword,
+                email: NewClientEmail
+                );
+
+                MessageBox.Show("Клиент успешно добавлен.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Очистка полей после добавления клиента
+                NewClientName = string.Empty;
+                NewClientPassport = string.Empty;
+                NewClientBirthDate = null;
+                NewClientPassword = string.Empty;
+                NewClientEmail = string.Empty;
+            }
+
+        }
 
         private void PrintReport(object parameter)
         {
@@ -364,7 +451,7 @@ namespace InsuranceAgency.ViewModel
             if (SelectedContract != null)
             {
                 _contractService.SignContract(SelectedContract.ContractID, 
-                    (int)CustomCost, Comment);
+                    (int)CustomCost, Comment, userId);
                 InsuranceContracts.Remove(SelectedContract);
                 CustomCost = 0;
                 Comment = string.Empty;
@@ -376,7 +463,8 @@ namespace InsuranceAgency.ViewModel
         {
             if (SelectedContract != null)
             {
-                _contractService.UnsignContract(SelectedContract.ContractID, SelectedContract.Comment);
+                _contractService.UnsignContract(SelectedContract.ContractID, SelectedContract.Comment,
+                    userId);
                 InsuranceContracts.Remove(SelectedContract);
                 CustomCost = 0;
                 Comment = string.Empty;

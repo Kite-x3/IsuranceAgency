@@ -199,7 +199,9 @@
                       SelectedItem="{Binding SelectedInsuranceCaseType, Mode=TwoWay}"/>
 
                     <Label Content="Дата страхового случая" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                    <DatePicker Width="400" Height="30" SelectedDate="{Binding CaseDate, Mode=TwoWay}"/>
+                    <DatePicker Width="400" Height="30" SelectedDate="{Binding CaseDate, Mode=TwoWay}"
+                                DisplayDateStart="{Binding StartDate}" 
+                                DisplayDateEnd="{Binding EndDate}"/>
 
                     <Label Content="Описание случая" HorizontalAlignment="Center" Margin="0,10,0,0"/>
                     <TextBox Width="400" Height="30" Margin="0,5,0,0" Text="{Binding InsuranceSituation, Mode=TwoWay}"/>
@@ -215,7 +217,7 @@
                                Style="{StaticResource CommonFontStyle}" Margin="0,0,0,10" HorizontalAlignment="Center"/>
                     <Label Content="Номер договора" HorizontalAlignment="Center"/>
                     <ComboBox Width="400" Height="30" HorizontalAlignment="Center" 
-                      ItemsSource="{Binding Contracts}" 
+                      ItemsSource="{Binding RenewableContracts}" 
                       DisplayMemberPath="Number"
                       SelectedItem="{Binding SelectedContract, Mode=TwoWay}"/>
                     <Label Content="Выберите срок страхования" HorizontalAlignment="Center" Margin="0,10,0,0"/>
@@ -256,7 +258,7 @@
                 <StackPanel Margin="10">
                     <TextBlock Text="Таблица договоров" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,10" HorizontalAlignment="Center"/>
 
-                    <DataGrid ItemsSource="{Binding Contracts}" 
+                    <DataGrid ItemsSource="{Binding AllContracts}" 
                   AutoGenerateColumns="False" 
                   CanUserAddRows="False" 
                   IsReadOnly="True" 
@@ -272,15 +274,16 @@
                     <TextBlock Text="Таблица страховых случаев" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,10" HorizontalAlignment="Center"/>
 
                     <DataGrid ItemsSource="{Binding UsersInsuranceCases}" 
-                  AutoGenerateColumns="False" 
-                  CanUserAddRows="False" 
-                  IsReadOnly="True">
+                      AutoGenerateColumns="False" 
+                      CanUserAddRows="False" 
+                      IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Номер договора" Binding="{Binding ContractNumber}" />
                             <DataGridTextColumn Header="Тип страхового случая" Binding="{Binding CaseTypeName}" />
                             <DataGridTextColumn Header="Дата случая" Binding="{Binding Date, StringFormat=dd.MM.yyyy}" />
                             <DataGridTextColumn Header="Описание" Binding="{Binding Description}" />
                             <DataGridTextColumn Header="Выплата" Binding="{Binding Payout}" />
+                            <DataGridTextColumn Header="Подписан?" Binding="{Binding signed}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </StackPanel>

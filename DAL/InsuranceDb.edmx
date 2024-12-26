@@ -24,8 +24,6 @@
           <Property Name="BirthDate" Type="date" Nullable="false" />
           <Property Name="Password" Type="nchar" MaxLength="20" Nullable="false" />
           <Property Name="Email" Type="nchar" MaxLength="50" Nullable="false" />
-          <Property Name="Gender" Type="nchar" MaxLength="10" Nullable="false" />
-          <Property Name="Profession" Type="nchar" MaxLength="20" Nullable="false" />
         </EntityType>
         <EntityType Name="Contract">
           <Key>
@@ -93,7 +91,6 @@
           <Property Name="PropertyID" Type="int" Nullable="false" />
           <Property Name="Address" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="EstimatedValue" Type="decimal" Precision="18" Scale="2" Nullable="false" />
-          <Property Name="Risks" Type="nvarchar" MaxLength="255" />
           <Property Name="TotalArea" Type="float" Nullable="false" />
         </EntityType>
         <EntityType Name="sysdiagrams">
@@ -246,8 +243,6 @@
           <Property Name="BirthDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="Password" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
           <Property Name="Email" Type="String" MaxLength="50" FixedLength="true" Unicode="true" Nullable="false" />
-          <Property Name="Gender" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
-          <Property Name="Profession" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Contract" Relationship="Self.FK__Contract__Client__164452B1" FromRole="Client" ToRole="Contract" />
         </EntityType>
         <EntityType Name="Contract">
@@ -317,7 +312,6 @@
           <Property Name="PropertyID" Type="Int32" Nullable="false" />
           <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="EstimatedValue" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
-          <Property Name="Risks" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="TotalArea" Type="Double" Nullable="false" />
           <NavigationProperty Name="Contract" Relationship="Self.FK_Contract_Property" FromRole="Property" ToRole="Contract" />
         </EntityType>
@@ -480,9 +474,7 @@
                 <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Gender" ColumnName="Gender" />
-                <ScalarProperty Name="Profession" ColumnName="Profession" />
-              </MappingFragment>
+                </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Contract">
@@ -546,7 +538,6 @@
                 <ScalarProperty Name="PropertyID" ColumnName="PropertyID" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="EstimatedValue" ColumnName="EstimatedValue" />
-                <ScalarProperty Name="Risks" ColumnName="Risks" />
                 <ScalarProperty Name="TotalArea" ColumnName="TotalArea" />
               </MappingFragment>
             </EntityTypeMapping>

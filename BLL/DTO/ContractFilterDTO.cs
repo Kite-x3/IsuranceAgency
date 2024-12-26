@@ -19,5 +19,6 @@ namespace BLL.DTO
         public string ProgramName { get; set; }
         public bool? signed { get; set; }
         public bool? ready { get; set; }
+        public string InsuranceAgent {  get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace BLL.DTO
             public string Comment { get; set; } 
             public DateTime StartDate { get; set; }
             public DateTime EndDate { get; set; }
+            public string Passport { get; set; }
             
         }
 }

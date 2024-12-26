@@ -60,46 +60,53 @@
             <TabItem Header="Страховые договоры">
                 <Grid Margin="10">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="147*"/>
-                        <ColumnDefinition Width="319*"/>
-                        <ColumnDefinition Width="310*"/>
+                        <ColumnDefinition Width="2*" />
+                        <!-- Для таблицы -->
+                        <ColumnDefinition Width="1*" />
+                        <!-- Для информации сбоку -->
                     </Grid.ColumnDefinitions>
 
+                    <!-- Таблица -->
                     <DataGrid x:Name="ContractsDataGrid" Grid.Column="0" 
-                              ItemsSource="{Binding InsuranceContracts}" 
-                              AutoGenerateColumns="False"
-                              SelectedItem="{Binding SelectedContract}" Grid.ColumnSpan="3" Margin="0,0,310,0">
+                  ItemsSource="{Binding InsuranceContracts}" 
+                  AutoGenerateColumns="False"
+                  SelectedItem="{Binding SelectedContract}" 
+                  Margin="0,0,10,0">
+                        <!-- Добавлен отступ справа -->
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Номер" Binding="{Binding Number}" Width="*" />
                             <DataGridTextColumn Header="Клиент" Binding="{Binding ClientName}" Width="*" />
                             <DataGridTextColumn Header="Стоимость" Binding="{Binding Cost}" Width="*" />
                             <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate}" Width="*" />
                             <DataGridTextColumn Header="Дата окончания" Binding="{Binding EndDate}" Width="*" />
+                            <DataGridTextColumn Header="Паспорт" Binding="{Binding Passport}" Width="*" />
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <StackPanel Grid.Column="2" Margin="10,10,10,10">
+                    <!-- Информация сбоку -->
+                    <StackPanel Grid.Column="1" Margin="10,50,0,0">
                         <TextBlock Text="Дополнительная информация:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,10"/>
                         <TextBlock Text="{Binding SelectedContract.ObjectAddress}" Style="{StaticResource CommonFontStyle}" 
-                                   TextWrapping="Wrap" Margin="0,0,0,10"/>
+                       TextWrapping="Wrap" Margin="0,0,0,10"/>
 
                         <TextBlock Text="Введите стоимость:" Style="{StaticResource CommonFontStyle}" Margin="0,10,0,5"/>
                         <TextBox Text="{Binding CustomCost, UpdateSourceTrigger=PropertyChanged}" 
-                                 Width="200" HorizontalAlignment="Left"/>
+                     Width="200" HorizontalAlignment="Left"/>
 
                         <TextBlock Text="Введите комментарий:" Style="{StaticResource CommonFontStyle}" Margin="0,10,0,5"/>
                         <TextBox Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}" 
-                                 Height="60" TextWrapping="Wrap" AcceptsReturn="True"/>
+                     Height="60" TextWrapping="Wrap" AcceptsReturn="True"/>
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
                             <Button Content="Принять" Style="{StaticResource ButtonStyle}" 
-                                    Command="{Binding AcceptContractCommand}" Margin="5" />
+                        Command="{Binding AcceptContractCommand}" Margin="5" />
                             <Button Content="Отклонить" Style="{StaticResource ButtonStyle}" 
-                                    Command="{Binding RejectContractCommand}" Margin="5" />
+                        Command="{Binding RejectContractCommand}" Margin="5" />
                         </StackPanel>
                     </StackPanel>
                 </Grid>
             </TabItem>
+
 
             <TabItem Header="Страховые случаи">
                 <Grid Margin="10">
@@ -195,25 +202,39 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
+                        <!-- Заголовок и фильтры для договоров -->
                         <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,0,0,10">
-                            <TextBlock Text="Фильтры:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+                            <TextBlock Text="Фильтры для договоров:" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                <TextBox Width="200" Text="{Binding ContractNumberFilter, UpdateSourceTrigger=PropertyChanged}" />
-                                <ComboBox ItemsSource="{Binding ContractSignedStatusOptions}" SelectedItem="{Binding SelectedContractSignedStatus}" Margin="10,0,0,0" MinWidth="100"/>
-                                <ComboBox ItemsSource="{Binding ReadyStatusOptions}" SelectedItem="{Binding SelectedReadyStatus}" Margin="10,0,0,0" MinWidth="100"/>
-                                <ComboBox ItemsSource="{Binding ProgramTypeOptions}" SelectedItem="{Binding SelectedProgramType}" Margin="10,0,0,0" MinWidth="100"/>
+                                <StackPanel Width="200" Margin="0,0,10,0">
+                                    <TextBlock Text="Номер договора:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+                                    <TextBox Text="{Binding ContractNumberFilter, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <StackPanel MinWidth="100" Margin="0,0,10,0">
+                                    <TextBlock Text="Подписан пользователем:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+                                    <ComboBox ItemsSource="{Binding ContractSignedStatusOptions}" SelectedItem="{Binding SelectedContractSignedStatus}"/>
+                                </StackPanel>
+                                <StackPanel MinWidth="100" Margin="0,0,10,0">
+                                    <TextBlock Text="Готовность:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+                                    <ComboBox ItemsSource="{Binding ReadyStatusOptions}" SelectedItem="{Binding SelectedReadyStatus}"/>
+                                </StackPanel>
+                                <StackPanel MinWidth="100">
+                                    <TextBlock Text="Тип программы:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+                                    <ComboBox ItemsSource="{Binding ProgramTypeOptions}" SelectedItem="{Binding SelectedProgramType}"/>
+                                </StackPanel>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+
+                            <StackPanel Orientation="Horizontal">
                                 <Button Content="Применить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ApplyContractFilterCommand}" Width="200" Margin="0,0,10,0"/>
                                 <Button Content="Сбросить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ResetFilterCommand}" Width="200"/>
                             </StackPanel>
                         </StackPanel>
 
-                        <DataGrid ItemsSource="{Binding FilteredContracts}" AutoGenerateColumns="True" Margin="0,10,0,0" Grid.Row="1" />
+                        <DataGrid ItemsSource="{Binding FilteredContracts}" AutoGenerateColumns="True" Margin="0,10,0,0" Grid.Row="1"/>
                     </Grid>
                 </Grid>
             </TabItem>
-
 
             <TabItem Header="Все случаи">
                 <Grid Margin="10">
@@ -222,23 +243,80 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
+                    <!-- Заголовок и фильтры для случаев -->
                     <StackPanel Orientation="Vertical" Grid.Row="0" Margin="0,0,0,10">
-                        <TextBlock Text="Фильтры:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+                        <TextBlock Text="Фильтры для случаев:" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
+
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBox Width="200" Text="{Binding CaseNumberFilter, UpdateSourceTrigger=PropertyChanged}"/>
-                            <ComboBox ItemsSource="{Binding CaseSignedStatusOptions}" SelectedItem="{Binding SelectedCaseSignedStatus}" Margin="10,0,0,0" MinWidth="100"/>
-                            <ComboBox ItemsSource="{Binding CaseTypeOptions}" SelectedItem="{Binding SelectedCaseType}" Margin="10,0,0,0" MinWidth="100"/>
+                            <StackPanel Width="200" Margin="0,0,10,0">
+                                <TextBlock Text="Номер случая:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+                                <TextBox Text="{Binding CaseNumberFilter, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                            <StackPanel MinWidth="100" Margin="0,0,10,0">
+                                <TextBlock Text="Подписан пользователем:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+                                <ComboBox ItemsSource="{Binding CaseSignedStatusOptions}" SelectedItem="{Binding SelectedCaseSignedStatus}"/>
+                            </StackPanel>
+                            <StackPanel MinWidth="100">
+                                <TextBlock Text="Тип случая:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5"/>
+                                <ComboBox ItemsSource="{Binding CaseTypeOptions}" SelectedItem="{Binding SelectedCaseType}"/>
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Button Content="Применить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ApplyCaseFilterCommand}" Width="200"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Применить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ApplyCaseFilterCommand}" Width="200" Margin="0 0 10 0"/>
                             <Button Content="Сбросить фильтр" Style="{StaticResource ButtonStyle}" Command="{Binding ResetFilterCommand}" Width="200"/>
                         </StackPanel>
-                        
                     </StackPanel>
 
                     <DataGrid ItemsSource="{Binding FilteredCases}" AutoGenerateColumns="True" Margin="0,10,0,0" Grid.Row="1"/>
                 </Grid>
             </TabItem>
+
+
+            <TabItem Header="Добавить клиента">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Margin="10" Grid.Row="0">
+                        <TextBlock Text="Добавить нового клиента" FontSize="16" FontWeight="Bold" Margin="0,0,0,10" />
+
+                        <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                            <TextBlock Text="Имя:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5" />
+                            <TextBox Text="{Binding NewClientName, UpdateSourceTrigger=PropertyChanged}" Width="200" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                            <TextBlock Text="Паспорт:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5" />
+                            <TextBox Text="{Binding NewClientPassport, UpdateSourceTrigger=PropertyChanged}" Width="200" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                            <TextBlock Text="Дата рождения:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5" />
+                            <DatePicker SelectedDate="{Binding NewClientBirthDate, UpdateSourceTrigger=PropertyChanged}" Width="200" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                            <TextBlock Text="Пароль:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5" />
+                            <TextBox Text="{Binding NewClientPassword, UpdateSourceTrigger=PropertyChanged}" Width="200" />
+                        </StackPanel>
+
+
+                        <StackPanel Orientation="Vertical" Margin="0,0,0,10">
+                            <TextBlock Text="Почта:" Style="{StaticResource CommonFontStyle}" Margin="0,0,0,5" />
+                            <TextBox Text="{Binding NewClientEmail, UpdateSourceTrigger=PropertyChanged}" Width="200" />
+                        </StackPanel>
+
+                        <Button Content="Добавить клиента" Style="{StaticResource ButtonStyle}" 
+                    Command="{Binding AddClientCommand}" Width="200" HorizontalAlignment="Left" Margin="0,10,0,0" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+
+
 
         </TabControl>
         <StackPanel Style="{StaticResource HeaderStyle}" Background="DarkGray"  HorizontalAlignment="Right" Orientation="Vertical">

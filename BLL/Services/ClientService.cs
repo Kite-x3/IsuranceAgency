@@ -16,6 +16,32 @@ namespace BLL.Services
             db = new InsuranceDBEntities1();
 
         }
+
+        public void AddClient(string name, string passport, DateTime birthDate, string password, string email)
+        {
+            var existingClient = db.Client.FirstOrDefault(c => c.Passport == passport);
+            if (existingClient != null)
+            {
+                throw new ArgumentException("Клиент с таким паспортом уже существует.");
+            }
+
+            int newClientId = db.Client.Any() ? db.Client.Max(c => c.ClientID) + 1 : 1;
+
+            var newClient = new Client
+            {
+                ClientID = newClientId,
+                FullName = name,
+                Passport = passport,
+                BirthDate = birthDate,
+                Password = password,
+                Email = email
+            };
+
+            db.Client.Add(newClient);
+            db.SaveChanges();
+        }
+
+
         public int GetAgeOfUser(int userId)
         {
             var client = db.Client.FirstOrDefault(c => c.ClientID == userId);

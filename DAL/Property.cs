@@ -23,7 +23,6 @@ namespace DAL
         public int PropertyID { get; set; }
         public string Address { get; set; }
         public decimal EstimatedValue { get; set; }
-        public string Risks { get; set; }
         public double TotalArea { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

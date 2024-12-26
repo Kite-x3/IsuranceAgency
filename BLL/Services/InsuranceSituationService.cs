@@ -43,7 +43,7 @@ namespace BLL.Services
             var cases = from insuranceCase in db.InsuranceCase
                         join contract in db.Contract on insuranceCase.ContractID equals contract.ContractID
                         join caseType in db.CaseType on insuranceCase.CaseTypeID equals caseType.CaseTypeID
-                        where contract.ClientID == userID && insuranceCase.signed == true
+                        where contract.ClientID == userID
                         select new InsuranceCaseDTO
                         {
                             CaseID = insuranceCase.CaseID,
@@ -52,7 +52,8 @@ namespace BLL.Services
                             CaseTypeName = caseType.Situation, 
                             Date = insuranceCase.Date,
                             Description = insuranceCase.description.TrimEnd(),
-                            Payout = insuranceCase.PayoutAmount
+                            Payout = insuranceCase.PayoutAmount,
+                            signed = insuranceCase.signed == true? "Подписан" : insuranceCase.signed == false ? "Отклонён" : "Не рассмотрен",
                         };
 
             return cases.ToList();
@@ -157,7 +158,7 @@ namespace BLL.Services
                 insuranceCase.signed = true;
                 insuranceCase.PayoutAmount = cost;
                 insuranceCase.Comment = comment.TrimEnd();
-                
+                insuranceCase.PayoutDate = DateTime.Now;
 
                 db.SaveChanges();
             }

@@ -63,6 +63,28 @@ namespace InsuranceAgency.ViewModel
             }
         }
 
+        private ObservableCollection<Contract> _allContracts;
+        public ObservableCollection<Contract> AllContracts
+        {
+            get => _allContracts;
+            set
+            {
+                _allContracts = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<Contract> _renewableContracts;
+        public ObservableCollection<Contract> RenewableContracts
+        {
+            get => _renewableContracts;
+            set
+            {
+                _renewableContracts = value;
+                OnPropertyChanged();
+            }
+        }
+
         private ObservableCollection<Contract> _aceptWaitingContracts;
         public ObservableCollection<Contract> AceptWaitingContracts
         {
@@ -266,6 +288,7 @@ namespace InsuranceAgency.ViewModel
                 _selectedContract = value;
                 OnPropertyChanged();
                 FilterInsuranceCaseTypes();
+
 
                 StartDate = _selectedContract.StartDate;
                 EndDate = _selectedContract.EndDate;
@@ -476,7 +499,7 @@ namespace InsuranceAgency.ViewModel
                     MessageBoxImage.Question
                 );
 
-                // Если пользователь согласился, отправляем заявку
+                
                 if (result == MessageBoxResult.Yes)
                 {
                     _insuranceSituationService.createInsuranceSituationAplication(
@@ -547,14 +570,20 @@ namespace InsuranceAgency.ViewModel
             var situations = _insuranceSituationService.GetAllCaseTypes();
             InsuranceCaseTypes = new ObservableCollection<CaseType>(situations);
 
-            var contracts = _contractService.GetAllUserContracts(userId);
+            var contracts = _contractService.GetAllUserActiveContracts(userId);
             Contracts = new ObservableCollection<Contract>(contracts);
+            
+            var allContracts = _contractService.GetAllUserSignedContracts(userId);
+            AllContracts = new ObservableCollection<Contract>(allContracts);
 
             var aceptContr = _contractService.GetAllAceptWaitingContracts(userId);
             AceptWaitingContracts = new ObservableCollection<Contract>(aceptContr);
 
             var cases = _insuranceSituationService.GetAllInsuranceCases(userId);
             UsersInsuranceCases = new ObservableCollection<InsuranceCaseDTO>(cases);
+
+            var renewableContracts = _contractService.GetAllRenewableContracts(userId);
+            RenewableContracts = new ObservableCollection<Contract>(renewableContracts);
         }
 
 

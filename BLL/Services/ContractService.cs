@@ -33,7 +33,13 @@ namespace BLL.Services
 
             db.SaveChanges();
         }
-
+        public List<Contract> GetAllRenewableContracts(int userID)
+        {
+            DateTime currentDate = DateTime.Now;
+            return db.Contract
+                .Where(contract => contract.EndDate < currentDate && contract.ClientID == userID)
+                .ToList();
+        }
         public void AddNewPropertyAplication(int clientId, decimal cost, DateTime startDate, DateTime endDate, 
             int objectCost, string objectAddress, int programId, int area)
         {
@@ -48,7 +54,6 @@ namespace BLL.Services
                     PropertyID = db.Property.Max(c => c.PropertyID) + 1,
                     Address = objectAddress,
                     EstimatedValue = objectCost,
-                    Risks = " ",
                     TotalArea = area
                     
                 };
@@ -96,7 +101,8 @@ namespace BLL.Services
                                 ObjectAddress = property != null ? property.Address : "Страхование жизни",
                                 Cost = contract.Cost,
                                 StartDate = contract.StartDate,
-                                EndDate = contract.EndDate
+                                EndDate = contract.EndDate,
+                                Passport = client.Passport,
                             };
 
             return contracts.ToList();
@@ -105,6 +111,19 @@ namespace BLL.Services
         public List<Contract> GetAllUserContracts(int userID)
         {
             return db.Contract.Where(c => c.ClientID == userID).ToList();
+        }
+        public List<Contract> GetAllUserSignedContracts(int userID)
+        {
+            return db.Contract
+                .Where(c => c.ClientID == userID && c.signed == true && c.ready == true)
+                .ToList();
+        }
+        public List<Contract> GetAllUserActiveContracts(int userID)
+        {
+            DateTime currentDate = DateTime.Now;
+            return db.Contract
+                .Where(c => c.ClientID == userID && c.EndDate > currentDate && c.signed == true && c.ready == true)
+                .ToList();
         }
         public float RenewContractCost(int currentContractId)
         {
@@ -171,7 +190,7 @@ namespace BLL.Services
             return contracts;
         }
 
-        public void SignContract(int contractId, int cost, string comment)
+        public void SignContract(int contractId, int cost, string comment, int userID)
         {
             var contract = db.Contract.FirstOrDefault(c => c.ContractID == contractId);
             if (contract != null)
@@ -179,12 +198,13 @@ namespace BLL.Services
                 contract.signed = true;
                 contract.Cost = cost;
                 contract.ready = null;
-                contract.Comment = comment.TrimEnd();
+                contract.Comment = comment;
+                contract.InsuranceAgentID = userID;
                 db.SaveChanges();
             }
         }
 
-        public void UnsignContract(int contractId, string comment)
+        public void UnsignContract(int contractId, string comment, int userID)
         {
             var contract = db.Contract.FirstOrDefault(c => c.ContractID == contractId);
             if (contract != null)
@@ -192,6 +212,7 @@ namespace BLL.Services
                 contract.signed = false;
                 contract.Cost = 0;
                 contract.Comment = comment.TrimEnd();
+                contract.InsuranceAgentID= userID;
                 db.SaveChanges();
             }
         }
@@ -243,6 +264,7 @@ namespace BLL.Services
                             join p in db.InsuranceProgram on c.ProgramID equals p.ProgramID
                             join cl in db.Client on c.ClientID equals cl.ClientID
                             join prop in db.Property on c.ObjectID equals prop.PropertyID into properties
+                            join a in db.InsuranceAgent on c.InsuranceAgentID equals a.InsuranceAgentID
                             from prop in properties.DefaultIfEmpty()
                             select new ContractFilterDTO
                             {
@@ -255,7 +277,8 @@ namespace BLL.Services
                                 EndDate = c.EndDate,
                                 ProgramName = p.Name,
                                 signed = c.signed,
-                                ready = c.ready
+                                ready = c.ready,
+                                InsuranceAgent = a.FullName
                             };
 
             return contracts.ToList();
@@ -286,6 +309,7 @@ namespace BLL.Services
         {
             var contracts = from c in db.Contract
                             join p in db.InsuranceProgram on c.ProgramID equals p.ProgramID
+                            join a in db.InsuranceAgent on c.InsuranceAgentID equals a.InsuranceAgentID
                             where
                                 (!contractNumber.HasValue || c.Number == contractNumber) &&
 
@@ -315,6 +339,7 @@ namespace BLL.Services
                                 ProgramName = p.Name,
                                 signed = c.signed,
                                 ready = c.ready,
+                                InsuranceAgent = a.FullName
                             };
 
             return contracts.ToList();
